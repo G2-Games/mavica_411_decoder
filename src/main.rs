@@ -1,11 +1,29 @@
-use std::{fs::File, io::{BufReader, Read}};
+use std::{env, fs::File, io::{BufReader, BufWriter, Read, Write}, time::Instant};
 
 use image::DynamicImage;
 
-fn main() {
-    let mut input_image = BufReader::new(File::open("MVC-659F.411").unwrap());
+const WIDTH: u32 = 64;
+const HEIGHT: u32 = 48;
 
-    let mut output_buffer = vec![];
+fn main() {
+    let arguments = env::args().skip(1);
+
+    for file in arguments {
+        let buffer = fouroneone_decoder(&file).unwrap();
+
+        let timer = Instant::now();
+        let out_image = image::RgbImage::from_raw(WIDTH, HEIGHT, buffer.to_vec()).unwrap();
+        dbg!(timer.elapsed());
+
+        DynamicImage::from(out_image).save(file + ".png").unwrap();
+    }
+}
+
+fn fouroneone_decoder(filename: &str) -> Result<[u8; 9216], ()> {
+    let mut input_image = BufReader::new(File::open(filename).unwrap());
+
+    let mut output_buffer = [0u8; 9216];
+    let mut output_writer = BufWriter::new(output_buffer.as_mut_slice());
 
     let mut input_buf = [0u8; 6];
     while input_image.read_exact(&mut input_buf).is_ok() {
@@ -29,12 +47,11 @@ fn main() {
             if g > 255 { g = 255 }
             if b > 255 { b = 255 }
 
-            output_buffer.extend_from_slice([r as u8, g as u8, b as u8].as_slice());
+            output_writer.write_all(&[r as u8, g as u8, b as u8]).unwrap();
         }
     }
 
-    dbg!(output_buffer.len());
+    drop(output_writer);
 
-    let out_image = image::RgbImage::from_raw(64, 48, output_buffer).unwrap();
-    DynamicImage::from(out_image).save("test.png");
+    Ok(output_buffer)
 }
