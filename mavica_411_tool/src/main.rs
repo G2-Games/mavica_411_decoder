@@ -10,9 +10,8 @@ fn main() {
         eprintln!("{}", env!("CARGO_PKG_DESCRIPTION"));
         eprintln!("\nUsage: {} [411 FILE]", env!("CARGO_CRATE_NAME"));
         eprintln!("\nArguments:");
-        eprintln!("  -h, --help    Print this help");
-        eprintln!("  -V, --version Print version information");
-        eprintln!("  -L, --license Print license information");
+        eprintln!("  -h, --help     Print this help");
+        eprintln!("  -V, --version  Print version information");
         std::process::exit(0);
     } else if arguments.contains(&"--version".to_string()) || arguments.contains(&"-V".to_string()) {
         eprintln!("{}", env!("CARGO_PKG_VERSION"));

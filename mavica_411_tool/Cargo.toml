@@ -1,8 +1,9 @@
 [package]
 name = "mavica_411_tool"
 description = "A simple Sony Mavica .411 thumbnail decoder."
-version = "1.0.0"
+version.workspace = true
 authors.workspace = true
+license.workspace = true
 publish = false
 edition = "2024"
 
