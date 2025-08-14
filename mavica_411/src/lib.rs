@@ -1,26 +1,11 @@
-use std::{env, fs::File, io::{BufReader, Read, Write}};
+use std::io::{Read, Write};
 
-use image::DynamicImage;
+pub const WIDTH: u32 = 64;
+pub const HEIGHT: u32 = 48;
+pub const LENGTH: usize = (WIDTH as usize * HEIGHT as usize) * 3;
+pub const INPUT_LENGTH: usize = ((WIDTH as usize * HEIGHT as usize) as f32 * 1.5) as usize;
 
-const WIDTH: u32 = 64;
-const HEIGHT: u32 = 48;
-const LENGTH: usize = (WIDTH as usize * HEIGHT as usize) * 3;
-const INPUT_LENGTH: usize = ((WIDTH as usize * HEIGHT as usize) as f32 * 1.5) as usize;
-
-fn main() {
-    let arguments = env::args().skip(1);
-
-    for file in arguments {
-        let mut input_image = BufReader::new(File::open(&file).unwrap());
-        let buffer = decode_411(&mut input_image).unwrap();
-
-        let out_image = image::RgbImage::from_raw(WIDTH, HEIGHT, buffer.to_vec()).unwrap();
-
-        DynamicImage::from(out_image).save(file + ".png").unwrap();
-    }
-}
-
-fn decode_411(mut reader: impl Read) -> Result<[u8; LENGTH], ()> {
+pub fn decode_411(mut reader: impl Read) -> Result<[u8; LENGTH], ()> {
     let mut output_buffer = [0u8; LENGTH];
     let mut output_writer = output_buffer.as_mut_slice();
 
@@ -69,6 +54,7 @@ fn rec601_fixed(y: u8, cb: u8, cr: u8) -> (u8, u8, u8) {
     let cr = cr as i32 - 128;
 
     let r = (y + 140200 * cr) / 100_000;
+    #[allow(clippy::zero_prefixed_literal)]
     let g = (y - 034414 * cb - 071414 * cr) / 100_000;
     let b = (y + 177200 * cb) / 100_000;
 
@@ -81,13 +67,13 @@ fn rec601_fixed(y: u8, cb: u8, cr: u8) -> (u8, u8, u8) {
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
+    use std::{fs::{self, File}, io::BufReader};
     use super::*;
 
     /// Test the decoding of a directory of .411 images
     #[test]
     fn test_decode() {
-        for image in std::fs::read_dir("./test_images")
+        for image in std::fs::read_dir("../test_images")
             .unwrap()
             .filter_map(|f| f.ok())
             .filter(|f|

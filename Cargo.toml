@@ -1,17 +1,21 @@
-[package]
-name = "decode_411"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "3"
+members = ["mavica_411", "mavica_411_tool"]
 
-[dependencies]
-image = { version = "0.25", default-features = false, features = ["png"] }
+[workspace.package]
+version = "1.0.0"
+authors = ["G2-Games <ke0bhogsg@gmail.com>"]
+license = "AGPL-3.0-or-later"
+
+[workspace.dependencies]
+mavica_411 = { path = "./mavica_411" }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
 
 [profile.release]
 lto = "fat"
-opt-level = "z"
+opt-level = 3
 strip = true
 panic = "abort"
 codegen-units = 1
-
-[features]
-fixed = []

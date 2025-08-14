@@ -1,0 +1,18 @@
+[package]
+name = "mavica_411_tool"
+description = "A simple Sony Mavica .411 thumbnail decoder."
+version = "1.0.0"
+authors.workspace = true
+publish = false
+edition = "2024"
+
+[[bin]]
+name = "mavica_411"
+path = "src/main.rs"    # The source file of the target.
+
+[features]
+fixed = ["mavica_411/fixed"]
+
+[dependencies]
+image = { version = "0.25", default-features = false, features = ["png"] }
+mavica_411.workspace = true

@@ -48,13 +48,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "decode_411"
-version = "0.1.0"
-dependencies = [
- "image",
-]
-
-[[package]]
 name = "fdeflate"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -83,6 +76,18 @@ dependencies = [
  "byteorder-lite",
  "num-traits",
  "png",
+]
+
+[[package]]
+name = "mavica_411"
+version = "1.0.0"
+
+[[package]]
+name = "mavica_411_tool"
+version = "1.0.0"
+dependencies = [
+ "image",
+ "mavica_411",
 ]
 
 [[package]]
