@@ -12,3 +12,6 @@ opt-level = "z"
 strip = true
 panic = "abort"
 codegen-units = 1
+
+[features]
+fixed = []
