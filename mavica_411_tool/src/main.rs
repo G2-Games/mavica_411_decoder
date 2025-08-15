@@ -1,9 +1,11 @@
-use std::{env, fs::File, io::BufReader};
+mod bitmap;
 
-use image::DynamicImage;
+use std::{env, error::Error, fs::File, io::BufReader};
+
+use bitmap::write_bitmap;
 use mavica_411::decode_411;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let arguments: Vec<String> = env::args().skip(1).collect();
 
     if arguments.contains(&"--help".to_string()) || arguments.contains(&"-h".to_string()) {
@@ -18,13 +20,15 @@ fn main() {
         std::process::exit(0);
     }
 
-    for file in arguments {
-        let mut input_image = BufReader::new(File::open(&file).unwrap());
+    for filename in arguments {
+        let file = File::open(&filename)?;
+
+        let mut input_image = BufReader::new(file);
         let buffer = decode_411(&mut input_image).unwrap();
 
-        let out_image = image::RgbImage::from_raw(mavica_411::WIDTH, mavica_411::HEIGHT, buffer.to_vec()).unwrap();
-
-        DynamicImage::from(out_image).save(file + ".png").unwrap();
+        write_bitmap(&(filename + ".BMP"), &buffer);
     }
+
+    Ok(())
 }
 
