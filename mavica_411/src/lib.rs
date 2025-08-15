@@ -1,11 +1,11 @@
-use std::io::{Read, Write};
+use std::{error::Error, io::{Read, Write}};
 
 pub const WIDTH: u32 = 64;
 pub const HEIGHT: u32 = 48;
 pub const LENGTH: usize = (WIDTH as usize * HEIGHT as usize) * 3;
 pub const INPUT_LENGTH: usize = ((WIDTH as usize * HEIGHT as usize) as f32 * 1.5) as usize;
 
-pub fn decode_411(mut reader: impl Read) -> Result<[u8; LENGTH], ()> {
+pub fn decode_411(mut reader: impl Read) -> Result<[u8; LENGTH], Box<dyn Error>> {
     let mut output_buffer = [0u8; LENGTH];
     let mut output_writer = output_buffer.as_mut_slice();
 
@@ -29,7 +29,9 @@ pub fn decode_411(mut reader: impl Read) -> Result<[u8; LENGTH], ()> {
                 }
             };
 
-            output_writer.write_all(&[r, g, b]).unwrap();
+            if output_writer.write_all(&[r, g, b]).is_err() {
+                break
+            }
         }
     }
 
